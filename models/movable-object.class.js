@@ -13,7 +13,7 @@ acceleration= 2.5;
 
 applyGravity(){
     setInterval(() => {
-        if(this.isAboveGroung()){
+        if(this.isAboveGroung()  || this.speedY > 0 ){
         this.y -=this.speedY;
         this.speedY -= this.acceleration;
         }
@@ -28,6 +28,20 @@ isAboveGroung(){
 loadImage(path){
     this.img = new Image();
     this.img.src = path;
+}
+
+draw(ctx){
+          ctx.drawImage(this.img, this.x, this.y, this.width , this.height);
+
+}
+
+
+drawFrame(ctx){
+    ctx.beginPath();
+ctx.lineWidth = "5";
+ctx.strokeStyle = "blue";
+ctx.rect( this.x, this.y, this.width , this.height);
+ctx.stroke();
 }
 
     loadImages(arr){
@@ -48,13 +62,18 @@ loadImage(path){
     
     
     moveRight(){
-        console.log('moving right');
+            this.x += this.speed;
+                this.otherDirection = false;
+               
     }
 
 
       moveLeft(){
-         setInterval(() => {
+      
             this.x -= this.speed;
-        }, 1000 / 60);
+    }
+
+    jump(){
+        this.speedY= 30;
     }
 }
