@@ -8,7 +8,21 @@ imageCache = [];
 currentImage=0;
 speed= 0.15;
 otherDirection= false;
+speedY = 0;
+acceleration= 2.5;
 
+applyGravity(){
+    setInterval(() => {
+        if(this.isAboveGroung()){
+        this.y -=this.speedY;
+        this.speedY -= this.acceleration;
+        }
+    }, 1000/25);
+}
+
+isAboveGroung(){
+ return this.y < 180;
+}
 
 
 loadImage(path){
