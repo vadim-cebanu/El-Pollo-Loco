@@ -10,6 +10,7 @@ speed= 0.15;
 otherDirection= false;
 
 
+
 loadImage(path){
     this.img = new Image();
     this.img.src = path;
@@ -23,6 +24,15 @@ loadImage(path){
         });
     }
 
+    playAnimation(images){
+        let i = this.currentImage % this.IMAGES_WALKING.length;
+                let path = images[i];
+                this.img = this.imageCache[path];
+                this.currentImage++;
+    }
+
+    
+    
     moveRight(){
         console.log('moving right');
     }
