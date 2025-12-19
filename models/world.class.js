@@ -1,14 +1,18 @@
 class World {
 
+   
     character = new Character();
     level = level1;
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
-    statusBar = new StatusBar;
+    statusBar = new StatusBar();
+    coinBar = new CoinBar();
+    bottleBar = new BottleBar();
     throwableObjects = [];
-
+    collectedCoins = 0;
+    collectedBottles = 0;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -34,12 +38,14 @@ class World {
     }
 
 
-checkCoinCollision() {
-    this.level.coins.forEach((coin, index) => {
-        if (this.character.isColliding(coin)) {
-            this.level.coins.splice(index, 1);
-            console.log('Coin collected!');
-        }
+ checkCoinCollision() {
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.level.coins.splice(index, 1);
+                this.collectedCoins++;
+                let percentage = (this.collectedCoins / 10) * 100; // 10 coins = 100%
+                this.coinBar.setPercentage(percentage);
+            }
     });
 }
 
@@ -72,6 +78,8 @@ checkCoinCollision() {
     this.addObjectsToMap(this.throwableObjects);
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.statusBar);
+       this.addToMap(this.coinBar);
+        this.addToMap(this.bottleBar);
     let self = this;
     requestAnimationFrame(function () {
         self.draw();
