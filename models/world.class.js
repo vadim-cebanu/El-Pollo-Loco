@@ -26,8 +26,8 @@ checkCollision(){
     setInterval(() => {
         this.level.enemies.forEach((enemy) => {
             if(this.character.isColliding(enemy)){
-                this.character.energy -= 2;
-               console.log('Collision! Energy:', this.character.energy);
+this.character.hit();
+   console.log('Collision! Energy:', this.character.energy);
             }
         });
     }, 200);

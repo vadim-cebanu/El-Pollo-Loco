@@ -32,26 +32,34 @@ class Character extends MovableObject {
         'img/2_character_pepe/3_jump/J-39.png'
     ];
 
-    walking_sound = ['audio/sounds/character/characterRun.mp3'];
+    IMAGES_DEAD= [
+            'img/2_character_pepe/5_dead/D-51.png',
+             'img/2_character_pepe/5_dead/D-52.png',
+             'img/2_character_pepe/5_dead/D-53.png',
+             'img/2_character_pepe/5_dead/D-54.png',
+             'img/2_character_pepe/5_dead/D-55.png',
+             'img/2_character_pepe/5_dead/D-56.png',
+             'img/2_character_pepe/5_dead/D-57.png'
+    ];
+
+    IMAGES_HURT=[
+      'img/2_character_pepe/4_hurt/H-41.png',
+      'img/2_character_pepe/4_hurt/H-42.png',
+      'img/2_character_pepe/4_hurt/H-43.png'     
+    ];
+    walking_sound =  new Audio ('audio/sounds/character/characterRun.mp3');
 
     world;
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
+        this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_HURT);
         this.applyGravity();
         this.animate();
         
     }
-// getRealFrame(){
-//     this.rX = this.x + this.offset.left;
-//     this.rY = this.y + this.offset.top;
-//     this.rW = this.width - this.offset.left - this.offset.right;
-//     this.rH = this.height -this.offset.top - this.offset.bottom;
-// }
-
-
-   
     animate() {
 
         setInterval(() => {
@@ -79,12 +87,13 @@ class Character extends MovableObject {
 
 
         setInterval(() => {
-
-            if (this.isAboveGroung()) {
+            if(this.isDead()){
+this.playAnimation(this.IMAGES_DEAD);
+            }else if(this.isHurt()){
+    this.playAnimation(this.IMAGES_HURT);
+            }else if (this.isAboveGroung()) {
                 this.playAnimation(this.IMAGES_JUMPING);
             } else {
-
-
                 if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                     this.playAnimation(this.IMAGES_WALKING);
                 }
@@ -94,7 +103,7 @@ class Character extends MovableObject {
 
 
     jump() {
-this.speedY=30
+this.speedY=30;
 
     }
-}
+} 
