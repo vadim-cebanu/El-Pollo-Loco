@@ -1,6 +1,6 @@
 class Character extends MovableObject {
     height = 280;
-    y = 155;
+    y =130;
     isWalkingSoundPlaying = false;
 hasDied = false;
     offset = {

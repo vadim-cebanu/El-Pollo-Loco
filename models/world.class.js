@@ -1,6 +1,4 @@
 class World {
-
-   
     character = new Character();
     level = level1;
     canvas;
@@ -47,10 +45,9 @@ checkBottleCollision() {
         if (this.character.isColliding(bottle)) {
             this.level.bottles.splice(index, 1);
             this.collectedBottles++;
-            let percentage = (this.collectedBottles / 5) * 100;
+            let percentage = (this.collectedBottles / 20) * 100;
             this.bottleBar.setPercentage(percentage);
-                        this.audioManager.playSound(this.audioManager.bottleCollectSound); 
-
+            this.audioManager.playSound(this.audioManager.bottleCollectSound);
         }
     });
 }
@@ -69,20 +66,18 @@ checkBottleCollision() {
 }
 
 
-    
 checkThrowObjects() {
     if (this.keyboard.D && this.collectedBottles > 0) {
         let bottle = new ThwrowableObjects(this.character.x + 100, this.character.y + 100);
         this.throwableObjects.push(bottle);
         this.collectedBottles--;
-        let percentage = (this.collectedBottles / 5) * 100; 
+        let percentage = (this.collectedBottles / 20) * 100; 
         this.bottleBar.setPercentage(percentage);
         this.keyboard.D = false;
-        setTimeout(() => {
-            this.keyboard.D = false;
-        }, 500);
+        this.audioManager.playSound(this.audioManager.bottleThrowSound);
     }
 }
+
 
 
     checkCollision() {
@@ -98,53 +93,67 @@ checkThrowObjects() {
         });
     }
 
-    checkEnemyCollision() {
-        this.level.enemies.forEach((enemy, index) => {
-            if (this.character.isColliding(enemy) && this.character.isAboveGroung() && !enemy.isDead) {
+   checkEnemyCollision() {
+    for (let i = this.level.enemies.length - 1; i >= 0; i--) {
+        let enemy = this.level.enemies[i];
+        if (this.character.isColliding(enemy) && this.character.isAboveGroung() && !enemy.isDead) {
+            if (enemy instanceof Chicken) {
                 enemy.hit();
                 this.character.jump();
-                                    this.audioManager.playSound(this.audioManager.chickenDeadSound);
+                this.audioManager.playSound(this.audioManager.chickenDeadSound);
+                setTimeout(() => {
+                    this.level.enemies.splice(i, 1);
+                }, 500);
+            }
+        }
+    }
+}
 
-                if (enemy instanceof Chicken) {
+checkBottleEnemyCollision() {
+    for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
+        let bottle = this.throwableObjects[i];
+        
+        for (let j = this.level.enemies.length - 1; j >= 0; j--) {
+            let enemy = this.level.enemies[j];
+            
+            if (bottle.isColliding(enemy) && !bottle.hasHit) {
+                bottle.hasHit = true;
+                enemy.hit();
+                this.audioManager.playSound(this.audioManager.bottleSplashSound);
+
+                // Șterge sticla
+                setTimeout(() => {
+                    let bottleIndex = this.throwableObjects.indexOf(bottle);
+                    if (bottleIndex > -1) {
+                        this.throwableObjects.splice(bottleIndex, 1);
+                    }
+                }, 300);
+
+                // Șterge găina moartă
+                if (enemy instanceof Chicken && enemy.isDead) {
+                    this.audioManager.playSound(this.audioManager.chickenDeadSound);
                     setTimeout(() => {
-                        this.level.enemies.splice(index, 1);
+                        let enemyIndex = this.level.enemies.indexOf(enemy);
+                        if (enemyIndex > -1) {
+                            this.level.enemies.splice(enemyIndex, 1);
+                        }
                     }, 500);
                 }
-            }
-        });
-    }
 
-      checkBottleEnemyCollision() {
-        this.throwableObjects.forEach((bottle, bottleIndex) => {
-            this.level.enemies.forEach((enemy, enemyIndex) => {
-                if (bottle.isColliding(enemy) && !bottle.hasHit) {
-                    bottle.hasHit = true;
-                    enemy.hit();
-       this.audioManager.playSound(this.audioManager.bottleSplashSound);
-
-                    
-                    setTimeout(() => {
-                        this.throwableObjects.splice(bottleIndex, 1);
-                    }, 300);
-                    
-                    if (enemy instanceof Chicken) {
-                                this.audioManager.playSound(this.audioManager.chickenDeadSound);
-
-                        setTimeout(() => {
-                            this.level.enemies.splice(enemyIndex, 1);
-                        }, 500);
-                    }
-                    
-                    if (enemy instanceof Endboss) {
-                        enemy.hadFirstContact = true;
-                        this.endbossBar.setPercentage(enemy.energy);
+                // Endboss
+                if (enemy instanceof Endboss) {
+                    enemy.hadFirstContact = true;
+                    this.endbossBar.setPercentage(enemy.energy);
                     this.audioManager.playSound(this.audioManager.endbossHurtSound);
-
+                    
+                    if (enemy.isDead) {
+                        this.audioManager.playSound(this.audioManager.endbossDeadSound);
                     }
                 }
-            });
-        });
+            }
+        }
     }
+}
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -178,7 +187,6 @@ checkThrowObjects() {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
 
         if (mo.otherDirection) {
             this.flipImageBack(mo);
@@ -196,4 +204,6 @@ checkThrowObjects() {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }
+
 }
+
