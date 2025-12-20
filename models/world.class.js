@@ -14,6 +14,8 @@ class World {
     throwableObjects = [];
     collectedCoins = 0;
     collectedBottles = 0;
+    audioManager = new AudioManager();
+
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -47,6 +49,8 @@ checkBottleCollision() {
             this.collectedBottles++;
             let percentage = (this.collectedBottles / 5) * 100;
             this.bottleBar.setPercentage(percentage);
+                        this.audioManager.playSound(this.audioManager.bottleCollectSound); 
+
         }
     });
 }
@@ -58,6 +62,8 @@ checkBottleCollision() {
                 this.collectedCoins++;
                 let percentage = (this.collectedCoins / 10) * 100;
                 this.coinBar.setPercentage(percentage);
+                            this.audioManager.playSound(this.audioManager.coinSound); 
+
             }
     });
 }
@@ -85,6 +91,8 @@ checkThrowObjects() {
                 if (!this.character.isAboveGroung() && !this.character.isHurt()) {
                     this.character.hit();
                     this.statusBar.setPercentage(this.character.energy);
+                 this.audioManager.playSound(this.audioManager.hurtSound);
+
                 }
             }
         });
@@ -95,7 +103,8 @@ checkThrowObjects() {
             if (this.character.isColliding(enemy) && this.character.isAboveGroung() && !enemy.isDead) {
                 enemy.hit();
                 this.character.jump();
-                
+                                    this.audioManager.playSound(this.audioManager.chickenDeadSound);
+
                 if (enemy instanceof Chicken) {
                     setTimeout(() => {
                         this.level.enemies.splice(index, 1);
@@ -111,12 +120,16 @@ checkThrowObjects() {
                 if (bottle.isColliding(enemy) && !bottle.hasHit) {
                     bottle.hasHit = true;
                     enemy.hit();
+       this.audioManager.playSound(this.audioManager.bottleSplashSound);
+
                     
                     setTimeout(() => {
                         this.throwableObjects.splice(bottleIndex, 1);
                     }, 300);
                     
                     if (enemy instanceof Chicken) {
+                                this.audioManager.playSound(this.audioManager.chickenDeadSound);
+
                         setTimeout(() => {
                             this.level.enemies.splice(enemyIndex, 1);
                         }, 500);
@@ -125,6 +138,8 @@ checkThrowObjects() {
                     if (enemy instanceof Endboss) {
                         enemy.hadFirstContact = true;
                         this.endbossBar.setPercentage(enemy.energy);
+                    this.audioManager.playSound(this.audioManager.endbossHurtSound);
+
                     }
                 }
             });
