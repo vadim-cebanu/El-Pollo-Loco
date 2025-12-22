@@ -5,11 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Pollo Loco</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/favicon.png">
 </head>
-<body onload="init()">
-    <div id="game-container">
-        <canvas id="canvas" width="720" height="480"></canvas>
-       
+<body>
+    <div id="start-screen">
+        <div id="start-container">
+            <h1>El Pollo Loco</h1>
+            <div id="start-buttons">
+                <button id="startBtn" onclick="startGame()">Start Game</button>
+                <button id="controlsBtn" onclick="showControls()">Controls</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="controls-dialog" class="hidden">
+        <div id="controls-content">
+            <span id="close-controls" onclick="hideControls()">×</span>
+            <h2>Controls</h2>
+            <div class="control-item">
+                <span class="key">←</span> Move Left
+            </div>
+            <div class="control-item">
+                <span class="key">→</span> Move Right
+            </div>
+            <div class="control-item">
+                <span class="key">SPACE</span> Jump
+            </div>
+            <div class="control-item">
+                <span class="key">D</span> Throw Bottle
+            </div>
+        </div>
+    </div>
+
+    <div id="game-screen" class="hidden">
+        <div id="game-container">
+            <canvas id="canvas" width="720" height="480"></canvas>
+            <div id="game-buttons">
+                <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
+                <button id="muteBtn" onclick="toggleMute()">🔊</button>
+            </div>
+            <div id="mobile-controls">
+                <div id="mobile-left">
+                    <button id="btnLeft" class="mobile-btn">←</button>
+                    <button id="btnRight" class="mobile-btn">→</button>
+                </div>
+                <div id="mobile-right">
+                    <button id="btnJump" class="mobile-btn">JUMP</button>
+                    <button id="btnThrow" class="mobile-btn">THROW</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="end-screen" class="hidden">
+        <div id="end-content">
+            <h2 id="end-title">Game Over</h2>
+            <img id="end-image" src="" alt="">
+            <div id="end-buttons">
+                <button onclick="restartGame()">Play Again</button>
+                <button onclick="goToMenu()">Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rotate-device" class="hidden">
+        <p>🔄 Please rotate your device to play!</p>
     </div>
 
     <script src="./models/drawable-object.class.js"></script>
@@ -27,11 +87,10 @@
     <script src="./models/bottle.class.js"></script>
     <script src="./models/throwable-object.class.js"></script>
     <script src="./models/sounds.class.js"></script>
+    <script src="./models/keyboard.class.js"></script>
     <script src="./models/level.class.js"></script>
     <script src="./levels/level1.js"></script>
-    <script src="./models/keyboard.class.js"></script>
     <script src="./models/world.class.js"></script>
     <script src="./script/game.js"></script>
-
 </body>
 </html>

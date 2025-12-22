@@ -121,7 +121,6 @@ checkBottleEnemyCollision() {
                 enemy.hit();
                 this.audioManager.playSound(this.audioManager.bottleSplashSound);
 
-                // Șterge sticla
                 setTimeout(() => {
                     let bottleIndex = this.throwableObjects.indexOf(bottle);
                     if (bottleIndex > -1) {
@@ -129,7 +128,6 @@ checkBottleEnemyCollision() {
                     }
                 }, 300);
 
-                // Șterge găina moartă
                 if (enemy instanceof Chicken && enemy.isDead) {
                     this.audioManager.playSound(this.audioManager.chickenDeadSound);
                     setTimeout(() => {
@@ -140,7 +138,6 @@ checkBottleEnemyCollision() {
                     }, 500);
                 }
 
-                // Endboss
                 if (enemy instanceof Endboss) {
                     enemy.hadFirstContact = true;
                     this.endbossBar.setPercentage(enemy.energy);
