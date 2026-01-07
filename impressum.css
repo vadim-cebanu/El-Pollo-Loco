@@ -1,0 +1,57 @@
+@font-face {
+    font-family: 'Boogaloo';
+    src: url('./fonts/Boogaloo-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.impressum-container {
+    margin: 50px auto;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    color: white;
+    font-family: 'Boogaloo';
+
+
+}
+
+.impressum-container h1 {
+    color: #f5a623;
+    margin-bottom: 30px;
+}
+
+.impressum-container h2 {
+    color: #f5a623;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.impressum-container p {
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 15px 30px;
+    background: #f5a623;
+    color: #333;
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.2rem;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.back-btn:hover {
+    transform: scale(1.05);
+    background: #ffb84d;
+}
+
+body {
+    background: url('img/9_intro_outro_screens/start/startscreen_1.png') center/cover no-repeat;
+    min-height: 100vh;
+}

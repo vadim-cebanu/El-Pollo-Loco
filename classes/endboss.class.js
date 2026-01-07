@@ -1,14 +1,25 @@
+/**
+ * Represents the endboss enemy
+ * @class Endboss
+ * @extends MovableObject
+ */
 class Endboss extends MovableObject {
+    /** @type {number} Endboss height */
     height = 400;
+    /** @type {number} Endboss width */
     width = 250;
-    y = 60;
-    energy = 50;
-    
+    /** @type {number} Y position */
+    y = 55;
+    /** @type {number} Energy/health points */
+    energy = 100;
+    /** @type {boolean} Whether endboss has been activated */
+    hadFirstContact = false;
+    /** @type {Object} Collision offsets */
     offset = {
-        top: 50,
+        top: 60,
+        left: 30,
         right: 30,
-        bottom: 20,
-        left: 30
+        bottom: 20
     };
 
     IMAGES_WALKING = [
@@ -52,30 +63,74 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/5_dead/G26.png'
     ];
 
-    hadFirstContact = false;
-
+    /**
+     * Creates a new Endboss instance
+     */
     constructor() {
-        super().loadImage(this.IMAGES_WALKING[0]);
+        super().loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
         this.x = 2500;
+        this.speed = 1;
         this.animate();
     }
 
+    /**
+     * Starts the animation loops for endboss behavior
+     */
     animate() {
         setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.hadFirstContact) {
-                this.playAnimation(this.IMAGES_ATTACK);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
+            this.handleMovement();
+        }, 1000 / 60);
+
+        setInterval(() => {
+            this.handleAnimationState();
         }, 200);
+    }
+
+    /**
+     * Handles endboss movement towards player
+     */
+    handleMovement() {
+        if (this.hadFirstContact && !this.isDead()) {
+            this.moveLeft();
+        }
+    }
+
+    /**
+     * Handles animation states based on endboss condition
+     */
+    handleAnimationState() {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.hadFirstContact) {
+            this.playAnimation(this.IMAGES_WALKING);
+        } else {
+            this.playAnimation(this.IMAGES_ALERT);
+        }
+    }
+
+    /**
+     * Activates the endboss when player gets close
+     */
+    activate() {
+        this.hadFirstContact = true;
+    }
+
+    /**
+     * Reduces endboss energy when hit
+     */
+    hit() {
+        this.energy -= 20;
+        if (this.energy < 0) {
+            this.energy = 0;
+        } else {
+            this.lastHit = new Date().getTime();
+        }
     }
 }

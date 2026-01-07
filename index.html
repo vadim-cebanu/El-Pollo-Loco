@@ -1,96 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>El Pollo Loco</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="img/favicon.png">
-</head>
-<body>
-    <div id="start-screen">
-        <div id="start-container">
-            <h1>El Pollo Loco</h1>
-            <div id="start-buttons">
-                <button id="startBtn" onclick="startGame()">Start Game</button>
-                <button id="controlsBtn" onclick="showControls()">Controls</button>
-            </div>
-        </div>
+    <link rel="stylesheet" href="style.css" />
+     <link rel="icon" type="image/png" href="img/favicon.png" />
+    <link href="./fonts/Boogaloo-Regular.ttf" rel="stylesheet" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="img/6_salsa_bottle/salsa_bottle.png" />
+    <script src="classes/drawable-object.class.js"></script>
+    <script src="classes/movable-object.class.js"></script>
+    <script src="classes/character.class.js"></script>
+    <script src="classes/chicken.class.js"></script>
+    <script src="classes/small-chicken.class.js"></script>
+    <script src="classes/endboss.class.js"></script>
+    <script src="classes/background-object.class.js"></script>
+    <script src="classes/cloud.class.js"></script>
+    <script src="classes/status-bar.class.js"></script>
+    <script src="classes/coin-bar.class.js"></script>
+    <script src="classes/bottle-bar.class.js"></script>
+    <script src="classes/endboss-bar.class.js"></script>
+    <script src="classes/throwable-object.class.js"></script>
+    <script src="classes/coin.class.js"></script>
+    <script src="classes/bottle.class.js"></script>
+    <script src="classes/world.class.js"></script>
+    <script src="classes/keyboard.class.js"></script>
+    <script src="classes/level.class.js"></script>
+    <script src="classes/sounds.class.js"></script>
+    <script src="levels/level1.js"></script>
+    <script src="js/game.js"></script>
+  </head>
+
+  <body>
+    <div id="rotate-device">
+      <span class="rotate-icon">📱</span>
+      <p>Please rotate your device to play</p>
     </div>
 
-    <div id="controls-dialog" class="hidden">
-        <div id="controls-content">
-            <span id="close-controls" onclick="hideControls()">×</span>
-            <h2>Controls</h2>
-            <div class="control-item">
-                <span class="key">←</span> Move Left
-            </div>
-            <div class="control-item">
-                <span class="key">→</span> Move Right
-            </div>
-            <div class="control-item">
-                <span class="key">SPACE</span> Jump
-            </div>
-            <div class="control-item">
-                <span class="key">D</span> Throw Bottle
-            </div>
+    <div id="game-container">
+      <div id="start-screen">
+        <img
+          src="img/9_intro_outro_screens/start/startscreen_1.png"
+          alt="Start Screen"
+          id="start-image"
+        />
+        <div id="start-buttons">
+          <button id="startBtn" onclick="startGame()">Start Game</button>
+          <button id="controlsBtn" onclick="showControls()">Controls</button>
         </div>
-    </div>
-
-    <div id="game-screen" class="hidden">
-        <div id="game-container">
-            <canvas id="canvas" width="720" height="480"></canvas>
-            <div id="game-buttons">
-                <button id="fullscreenBtn" onclick="toggleFullscreen()">⛶</button>
-                <button id="muteBtn" onclick="toggleMute()">🔊</button>
-            </div>
-            <div id="mobile-controls">
-                <div id="mobile-left">
-                    <button id="btnLeft" class="mobile-btn">←</button>
-                    <button id="btnRight" class="mobile-btn">→</button>
-                </div>
-                <div id="mobile-right">
-                    <button id="btnJump" class="mobile-btn">JUMP</button>
-                    <button id="btnThrow" class="mobile-btn">THROW</button>
-                </div>
-            </div>
+        <div id="footer-links">
+          <a href="impressum.html">Impressum</a>
         </div>
-    </div>
+      </div>
 
-    <div id="end-screen" class="hidden">
+      <canvas id="canvas" width="720" height="480"></canvas>
+
+      <div id="game-buttons" class="hidden">
+        <button id="muteBtn" onclick="toggleMute()">
+          <span id="muteIcon">🔊</span>
+        </button>
+        <button id="fullscreenBtn" onclick="toggleFullscreen()">
+          <span>⛶</span>
+        </button>
+      </div>
+
+      <div id="mobile-controls" class="hidden">
+        <div id="mobile-left">
+          <button id="leftBtn" class="mobile-btn">◀</button>
+          <button id="rightBtn" class="mobile-btn">▶</button>
+        </div>
+        <div id="mobile-right">
+          <button id="jumpBtn" class="mobile-btn">↑</button>
+          <button id="throwBtn" class="mobile-btn">🍾</button>
+        </div>
+      </div>
+
+      <div id="end-screen" class="hidden">
         <div id="end-content">
-            <h2 id="end-title">Game Over</h2>
-            <img id="end-image" src="" alt="">
-            <div id="end-buttons">
-                <button onclick="restartGame()">Play Again</button>
-                <button onclick="goToMenu()">Main Menu</button>
-            </div>
+          <img src="" alt="End Screen" id="end-image" />
+          <div id="end-buttons">
+            <button id="restartBtn" onclick="restartGame()">Play Again</button>
+            <button id="menuBtn" onclick="backToMenu()">Main Menu</button>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div id="rotate-device" class="hidden">
-        <p>🔄 Please rotate your device to play!</p>
+      <div id="controls-dialog" class="hidden">
+        <div id="controls-content">
+          <span id="close-controls" onclick="hideControls()">✕</span>
+          <h2>Controls</h2>
+          <div class="control-item">
+            <span class="key">←</span>
+            <span>Move Left</span>
+          </div>
+          <div class="control-item">
+            <span class="key">→</span>
+            <span>Move Right</span>
+          </div>
+          <div class="control-item">
+            <span class="key">SPACE</span>
+            <span>Jump</span>
+          </div>
+          <div class="control-item">
+            <span class="key">D</span>
+            <span>Throw Bottle</span>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <script src="./models/drawable-object.class.js"></script>
-    <script src="./models/movable-object.class.js"></script>
-    <script src="./models/character.class.js"></script>
-    <script src="./models/chicken.class.js"></script>
-    <script src="./models/endboss.class.js"></script>
-    <script src="./models/clouds.class.js"></script>
-    <script src="./models/background-object.class.js"></script>
-    <script src="./models/status-bar.class.js"></script>
-    <script src="./models/coin-bar.class.js"></script>
-    <script src="./models/bottle-bar.class.js"></script>
-    <script src="./models/endboss-bar.class.js"></script>
-    <script src="./models/coin.class.js"></script>
-    <script src="./models/bottle.class.js"></script>
-    <script src="./models/throwable-object.class.js"></script>
-    <script src="./models/sounds.class.js"></script>
-    <script src="./models/keyboard.class.js"></script>
-    <script src="./models/level.class.js"></script>
-    <script src="./levels/level1.js"></script>
-    <script src="./models/world.class.js"></script>
-    <script src="./script/game.js"></script>
-</body>
+  </body>
 </html>
