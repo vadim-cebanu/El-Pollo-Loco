@@ -94,11 +94,25 @@ class Endboss extends MovableObject {
     /**
      * Handles endboss movement towards player
      */
-    handleMovement() {
-        if (this.hadFirstContact && !this.isDead()) {
-            this.moveLeft();
-        }
+   handleMovement() {
+    if (!this.hadFirstContact || this.isDead()) return;
+
+    this.speed = this.energy < 50 ? 2.5 : 1.5;
+
+    const characterX = world.character.x;
+    const distance = Math.abs(this.x - characterX);
+
+    if (distance < 50) return;
+
+    if (this.x > characterX) {
+        this.moveLeft();
+        this.otherDirection = false;
+    } else {
+        this.moveRight();
+        this.otherDirection = true;
     }
+}
+
 
     /**
      * Handles animation states based on endboss condition
@@ -126,7 +140,7 @@ class Endboss extends MovableObject {
      * Reduces endboss energy when hit
      */
     hit() {
-        this.energy -= 20;
+        this.energy -= 5;
         if (this.energy < 0) {
             this.energy = 0;
         } else {

@@ -193,8 +193,19 @@ class Character extends MovableObject {
         }
 
         this.handleWalkingSound(isMoving);
-        this.world.camera_x = -this.x + 100;
+        let endboss = this.world.level.enemies.find(e => e instanceof Endboss);
+        let targetCameraX = -this.x + 100;
+        if (
+            endboss &&
+            endboss.hadFirstContact &&
+            endboss.x < this.x &&
+            endboss.otherDirection
+        ) {
+            targetCameraX = -this.x + 300;
+        }
+        this.world.camera_x += (targetCameraX - this.world.camera_x) * 0.05;
     }
+
 
     /**
      * Stops all character-related sounds
