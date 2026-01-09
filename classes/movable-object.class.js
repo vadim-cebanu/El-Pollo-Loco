@@ -19,21 +19,33 @@ class MovableObject extends DrawableObject {
     };
 
     /**
-     * Applies gravity to the object
-     * @returns {void}
-     */
+  * Applies gravity and vertical movement to the object.
+  *
+  * The method also stores the object's previous Y position
+  * before applying gravity. This allows precise detection
+  * of vertical collision transitions (e.g. landing on enemies),
+  * avoiding unreliable checks based on speed or timing.
+  *
+  * Gravity is applied only while the object is above ground
+  * or moving upwards. Once the object reaches the ground,
+  * its vertical speed is reset.
+  *
+  * @returns {void}
+  */
     applyGravity() {
         setInterval(() => {
+            this.previousY = this.y;
+
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
+
             if (!this.isAboveGround() && !(this instanceof ThrowableObject)) {
                 this.y = 145;
                 this.speedY = 0;
             }
         }, 1000 / 25);
-
     }
 
     /**

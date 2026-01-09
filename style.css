@@ -14,7 +14,7 @@
 }
 
 body {
-    background:url("/img/9_intro_outro_screens/start/startscreen.png");
+    background-color: aqua;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -27,7 +27,6 @@ body {
     position: relative;
     width: 720px;
     height: 480px;
-    /* max-width: 100%; */
     max-height: 96vh; 
 }
 
@@ -77,6 +76,7 @@ body {
     display: block;
     width: 100%;
     height: 100%;
+    touch-action: none;
 }
 
 #game-buttons {

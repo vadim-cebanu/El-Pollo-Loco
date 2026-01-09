@@ -37,6 +37,18 @@ class World {
     canThrow = true;
     /** @type {boolean} Whether endboss has been activated */
     endbossActivated = false;
+    /**
+ * Stores the vertical position from the previous frame.
+ * Used to detect vertical movement direction and
+ * to determine whether the object was above another object
+ * before a collision occurred.
+ *
+ * This is essential for reliable "jump-on-enemy" detection,
+ * independent of frame rate or vertical speed values.
+ *
+ * @type {number}
+ */
+    previousY = 0;
 
     /**
      * Creates a new World instance
@@ -132,14 +144,27 @@ class World {
     }
 
     /**
-     * Checks if character is jumping on an enemy
-     * @param {MovableObject} enemy - The enemy to check
-     * @returns {boolean} True if character is jumping on enemy
-     */
+  * Determines whether the character is jumping on top of an enemy.
+  *
+  * A valid "jump-on-enemy" occurs only if:
+  * - The character was above the enemy in the previous frame
+  * - A collision is currently happening
+  * - The character is in the air (not sliding or walking)
+  * - The enemy is not an endboss
+  *
+  * This approach ensures stable and deterministic collision
+  * behavior, independent of frame rate and vertical speed.
+  *
+  * @param {MovableObject} enemy - The enemy to check collision against
+  * @returns {boolean} True if the character is landing on the enemy
+  */
     isJumpingOnEnemy(enemy) {
-        return this.character.isAboveGround() &&
-            this.character.speedY < 0 &&
-            !(enemy instanceof Endboss);
+        return (
+            this.character.previousY + this.character.height - this.character.offset.bottom <= enemy.y + enemy.offset.top &&
+            this.character.isColliding(enemy) &&
+            this.character.isAboveGround() &&
+            !(enemy instanceof Endboss)
+        );
     }
 
     /**

@@ -136,37 +136,45 @@ function setupMobileControls() {
 }
 
 /**
- * Sets up a single mobile button with touch events
- * @param {string} buttonId - ID of the button element
- * @param {string} keyProperty - Property name in keyboard object
+ * Sets up a single mobile control button with touch and mouse support.
+ * Touch events use passive: false to allow preventDefault(),
+ * which is required to stop browser scrolling on mobile devices.
+ *
+ * @param {string} buttonId - The DOM id of the control button
+ * @param {string} keyProperty - The keyboard property to simulate (e.g. 'LEFT', 'RIGHT')
  */
 function setupMobileButton(buttonId, keyProperty) {
     let button = document.getElementById(buttonId);
-    if (button) {
-        button.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            keyboard[keyProperty] = true;
-        }, { passive: false });
 
-        button.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            keyboard[keyProperty] = false;
-        }, { passive: false });
+    if (!button) return;
 
-        button.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            keyboard[keyProperty] = true;
-        });
+    /**
+     * Activates the virtual key when the button is pressed
+     * @param {Event} e - Touch or mouse event
+     */
+    const press = (e) => {
+        e.preventDefault();
+        keyboard[keyProperty] = true;
+    };
 
-        button.addEventListener('mouseup', (e) => {
-            e.preventDefault();
-            keyboard[keyProperty] = false;
-        });
+    /**
+     * Deactivates the virtual key when the button is released
+     * @param {Event} e - Touch or mouse event
+     */
+    const release = (e) => {
+        e.preventDefault();
+        keyboard[keyProperty] = false;
+    };
 
-        button.addEventListener('mouseleave', (e) => {
-            keyboard[keyProperty] = false;
-        });
-    }
+    // Touch events (mobile)
+    button.addEventListener('touchstart', press, { passive: false });
+    button.addEventListener('touchend', release, { passive: false });
+    button.addEventListener('touchcancel', release, { passive: false });
+
+    // Mouse events (desktop fallback)
+    button.addEventListener('mousedown', press);
+    button.addEventListener('mouseup', release);
+    button.addEventListener('mouseleave', () => keyboard[keyProperty] = false);
 }
 
 /**
