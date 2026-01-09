@@ -61,6 +61,25 @@ class MovableObject extends DrawableObject {
     }
 
     /**
+ * Checks if the character landed on top of an enemy.
+ *
+ * @param {MovableObject} enemy
+ * @returns {boolean}
+ */
+isLandingOnEnemy(enemy) {
+    const characterBottomBefore =
+        this.character.previousY + this.character.height;
+
+    const enemyTop =
+        enemy.y + enemy.offset.top;
+
+    return (
+        characterBottomBefore <= enemyTop &&
+        this.character.speedY < 0
+    );
+}
+
+    /**
      * Checks collision with another object
      * @param {MovableObject} mo - The object to check collision with
      * @returns {boolean} True if colliding
@@ -77,7 +96,7 @@ class MovableObject extends DrawableObject {
      * @returns {void}
      */
     hit() {
-        this.energy -= 5;
+        this.energy -= 15;
         if (this.energy < 0) {
             this.energy = 0;
         } else {

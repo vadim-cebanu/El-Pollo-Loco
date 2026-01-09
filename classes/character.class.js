@@ -26,7 +26,7 @@ class Character extends MovableObject {
         top: 105,
         left: 25,
         right: 35,
-        bottom: 12
+        bottom: 3
     };
 
     /** @type {string[]} Idle animation images */
