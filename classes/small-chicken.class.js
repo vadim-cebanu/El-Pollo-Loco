@@ -18,7 +18,7 @@ class SmallChicken extends MovableObject {
     * @type {{top:number,left:number,right:number,bottom:number}}
     */
     offset = {
-        top: -10,
+        top: -15,
         left: 8,
         right: 5,
         bottom: 5

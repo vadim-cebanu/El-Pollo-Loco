@@ -37,18 +37,6 @@ class World {
     canThrow = true;
     /** @type {boolean} Whether endboss has been activated */
     endbossActivated = false;
-    /**
- * Stores the vertical position from the previous frame.
- * Used to detect vertical movement direction and
- * to determine whether the object was above another object
- * before a collision occurred.
- *
- * This is essential for reliable "jump-on-enemy" detection,
- * independent of frame rate or vertical speed values.
- *
- * @type {number}
- */
-    previousY = 0;
 
     /**
      * Creates a new World instance
@@ -68,13 +56,15 @@ class World {
 
     /**
      * Sets the world reference in character
+     * @returns {void}
      */
     setWorld() {
         this.character.world = this;
     }
 
     /**
-     * Main game loop - runs every 100ms
+     * Main game loop - runs collision checks and updates every 100ms
+     * @returns {void}
      */
     run() {
         setInterval(() => {
@@ -94,6 +84,7 @@ class World {
 
     /**
      * Removes dead enemies and broken bottles after delay
+     * @returns {void}
      */
     cleanupDeadObjects() {
         this.level.enemies = this.level.enemies.filter(enemy => {
@@ -107,7 +98,8 @@ class World {
     }
 
     /**
-     * Checks if player wants to throw a bottle
+     * Checks if player wants to throw a bottle and executes throw
+     * @returns {void}
      */
     checkThrowObjects() {
         if (this.keyboard.D && this.collectedBottles > 0 && this.canThrow && !this.character.isDead()) {
@@ -130,6 +122,7 @@ class World {
 
     /**
      * Checks collision between character and enemies
+     * @returns {void}
      */
     checkCollision() {
         this.level.enemies.forEach((enemy) => {
@@ -144,32 +137,20 @@ class World {
     }
 
     /**
-  * Determines whether the character is jumping on top of an enemy.
-  *
-  * A valid "jump-on-enemy" occurs only if:
-  * - The character was above the enemy in the previous frame
-  * - A collision is currently happening
-  * - The character is in the air (not sliding or walking)
-  * - The enemy is not an endboss
-  *
-  * This approach ensures stable and deterministic collision
-  * behavior, independent of frame rate and vertical speed.
-  *
-  * @param {MovableObject} enemy - The enemy to check collision against
-  * @returns {boolean} True if the character is landing on the enemy
-  */
+     * Determines whether the character is jumping on top of an enemy
+     * @param {MovableObject} enemy - The enemy to check collision against
+     * @returns {boolean} True if the character is landing on the enemy
+     */
     isJumpingOnEnemy(enemy) {
-        return (
-            this.character.previousY + this.character.height - this.character.offset.bottom <= enemy.y + enemy.offset.top &&
-            this.character.isColliding(enemy) &&
-            this.character.isAboveGround() &&
-            !(enemy instanceof Endboss)
-        );
+        return this.character.isAboveGround() &&
+            this.character.speedY < 0 &&
+            !(enemy instanceof Endboss);
     }
 
     /**
      * Handles killing an enemy by jumping on it
      * @param {MovableObject} enemy - The enemy to kill
+     * @returns {void}
      */
     handleEnemyJumpKill(enemy) {
         enemy.dead = true;
@@ -182,6 +163,7 @@ class World {
 
     /**
      * Handles character getting hit by enemy
+     * @returns {void}
      */
     handleCharacterHit() {
         if (!this.character.isHurt() && !this.character.isDead()) {
@@ -193,6 +175,7 @@ class World {
 
     /**
      * Checks collision between character and coins
+     * @returns {void}
      */
     checkCoinCollision() {
         this.level.coins.forEach((coin, index) => {
@@ -207,6 +190,7 @@ class World {
 
     /**
      * Checks collision between character and bottles on ground
+     * @returns {void}
      */
     checkBottleCollision() {
         this.level.bottles.forEach((bottle, index) => {
@@ -221,6 +205,7 @@ class World {
 
     /**
      * Checks collision between thrown bottles and enemies
+     * @returns {void}
      */
     checkBottleEnemyCollision() {
         this.throwableObjects.forEach((bottle) => {
@@ -237,6 +222,7 @@ class World {
     /**
      * Handles bottle hitting an enemy
      * @param {MovableObject} enemy - The enemy that was hit
+     * @returns {void}
      */
     handleBottleHit(enemy) {
         if (enemy instanceof Endboss) {
@@ -253,7 +239,8 @@ class World {
     }
 
     /**
-     * Checks if endboss should be activated
+     * Checks if endboss should be activated when character reaches certain position
+     * @returns {void}
      */
     checkEndbossActivation() {
         let endboss = this.level.enemies.find(e => e instanceof Endboss);
@@ -266,7 +253,8 @@ class World {
     }
 
     /**
-     * Checks if game is over (character dead)
+     * Checks if game is over (character dead) and triggers end screen
+     * @returns {void}
      */
     checkGameOver() {
         if (this.character.isDead() && !this.gameOver) {
@@ -282,7 +270,8 @@ class World {
     }
 
     /**
-     * Checks if game is won (endboss dead)
+     * Checks if game is won (endboss dead) and triggers victory screen
+     * @returns {void}
      */
     checkGameWon() {
         let endboss = this.level.enemies.find(e => e instanceof Endboss);
@@ -299,13 +288,25 @@ class World {
     }
 
     /**
-     * Main draw loop - renders all game objects
+     * Main draw loop - renders all game objects using requestAnimationFrame
+     * @returns {void}
      */
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // Disable image smoothing for pixel-perfect rendering
+        this.ctx.imageSmoothingEnabled = false;
+        this.ctx.webkitImageSmoothingEnabled = false;
+        this.ctx.mozImageSmoothingEnabled = false;
+        this.ctx.msImageSmoothingEnabled = false;
+        this.ctx.oImageSmoothingEnabled = false;
+
         this.ctx.save();
-        this.ctx.translate(this.camera_x, 0);
+        // Round camera position to prevent sub-pixel rendering gaps
+        let cameraX = Math.floor(this.camera_x);
+        this.ctx.translate(cameraX, 0);
+
+        // Draw game objects with camera transform
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addToMap(this.character);
@@ -313,8 +314,10 @@ class World {
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.throwableObjects);
+
         this.ctx.restore();
 
+        // Draw UI elements without camera transform
         this.addToMap(this.statusBar);
         this.addToMap(this.coinBar);
         this.addToMap(this.bottleBar);
@@ -330,14 +333,16 @@ class World {
     /**
      * Adds multiple objects to the map
      * @param {DrawableObject[]} objects - Array of objects to draw
+     * @returns {void}
      */
     addObjectsToMap(objects) {
         objects.forEach(obj => this.addToMap(obj));
     }
 
     /**
-     * Adds a single object to the map
+     * Adds a single object to the map with proper transformations
      * @param {DrawableObject} mo - Object to draw
+     * @returns {void}
      */
     addToMap(mo) {
         if (!mo) return;
@@ -349,6 +354,7 @@ class World {
     /**
      * Flips image horizontally for left-facing sprites
      * @param {DrawableObject} mo - Object to flip
+     * @returns {void}
      */
     flipImage(mo) {
         this.ctx.save();
@@ -360,6 +366,7 @@ class World {
     /**
      * Restores image after flipping
      * @param {DrawableObject} mo - Object to restore
+     * @returns {void}
      */
     flipImageBack(mo) {
         mo.x = mo.x * -1;

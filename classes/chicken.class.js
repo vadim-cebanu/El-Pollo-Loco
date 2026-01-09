@@ -18,7 +18,7 @@ class Chicken extends MovableObject {
      * @type {{top:number,left:number,right:number,bottom:number}}
      */
     offset = {
-        top: 5,
+        top: -10,
         left: 5,
         right: 10,
         bottom: 10
