@@ -145,33 +145,19 @@ function setupMobileControls() {
  */
 function setupMobileButton(buttonId, keyProperty) {
     let button = document.getElementById(buttonId);
-
     if (!button) return;
-
-    /**
-     * Activates the virtual key when the button is pressed
-     * @param {Event} e - Touch or mouse event
-     */
     const press = (e) => {
         e.preventDefault();
         keyboard[keyProperty] = true;
     };
-
-    /**
-     * Deactivates the virtual key when the button is released
-     * @param {Event} e - Touch or mouse event
-     */
     const release = (e) => {
         e.preventDefault();
         keyboard[keyProperty] = false;
     };
 
-    // Touch events (mobile)
     button.addEventListener('touchstart', press, { passive: false });
     button.addEventListener('touchend', release, { passive: false });
     button.addEventListener('touchcancel', release, { passive: false });
-
-    // Mouse events (desktop fallback)
     button.addEventListener('mousedown', press);
     button.addEventListener('mouseup', release);
     button.addEventListener('mouseleave', () => keyboard[keyProperty] = false);
@@ -294,10 +280,7 @@ function backToMenu() {
     document.getElementById('start-screen').classList.remove('hidden');
 }
 
-// Event listeners
 document.addEventListener('DOMContentLoaded', init);
-
-// Responsive handler
 window.addEventListener('resize', handleResponsive);
 window.addEventListener('orientationchange', handleResponsive);
 

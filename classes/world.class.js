@@ -79,7 +79,7 @@ class World {
                 this.checkGameWon();
                 this.cleanupDeadObjects();
             }
-        }, 100);
+        }, 25);
     }
 
     /**
@@ -293,20 +293,14 @@ class World {
      */
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Disable image smoothing for pixel-perfect rendering
         this.ctx.imageSmoothingEnabled = false;
         this.ctx.webkitImageSmoothingEnabled = false;
         this.ctx.mozImageSmoothingEnabled = false;
         this.ctx.msImageSmoothingEnabled = false;
         this.ctx.oImageSmoothingEnabled = false;
-
         this.ctx.save();
-        // Round camera position to prevent sub-pixel rendering gaps
         let cameraX = Math.floor(this.camera_x);
         this.ctx.translate(cameraX, 0);
-
-        // Draw game objects with camera transform
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addToMap(this.character);
@@ -314,10 +308,7 @@ class World {
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.throwableObjects);
-
         this.ctx.restore();
-
-        // Draw UI elements without camera transform
         this.addToMap(this.statusBar);
         this.addToMap(this.coinBar);
         this.addToMap(this.bottleBar);
