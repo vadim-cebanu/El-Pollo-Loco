@@ -120,21 +120,26 @@ class World {
         }
     }
 
-    /**
-     * Checks collision between character and enemies
-     * @returns {void}
-     */
-    checkCollision() {
-        this.level.enemies.forEach((enemy) => {
-            if (!enemy.dead && this.character.isColliding(enemy)) {
-                if (this.isJumpingOnEnemy(enemy)) {
-                    this.handleEnemyJumpKill(enemy);
-                } else {
-                    this.handleCharacterHit();
-                }
+   /**
+ * Checks for collisions between the character and all enemies.
+ * Solves the "double chicken" bug by prioritizing jump kills and 
+ * verifying the dead state immediately.
+ */
+checkCollision() {
+    this.level.enemies.forEach((enemy) => {
+        if (enemy.dead) {
+            return;
+        }
+        if (this.character.isColliding(enemy)) {
+            if (this.isJumpingOnEnemy(enemy)) {
+                this.handleEnemyJumpKill(enemy);
+            } 
+            else if (!enemy.dead) {
+                this.handleCharacterHit();
             }
-        });
-    }
+        }
+    });
+}
 
     /**
      * Determines whether the character is jumping on top of an enemy
@@ -142,9 +147,9 @@ class World {
      * @returns {boolean} True if the character is landing on the enemy
      */
     isJumpingOnEnemy(enemy) {
-        return this.character.isAboveGround() &&
-            this.character.speedY < 0 &&
-            !(enemy instanceof Endboss);
+        return this.character.isAboveGround() && 
+           (this.character.speedY <= 0 || this.character.lastStompTime > new Date().getTime() - 50) &&
+           !(enemy instanceof Endboss);
     }
 
     /**
@@ -153,12 +158,14 @@ class World {
      * @returns {void}
      */
     handleEnemyJumpKill(enemy) {
-        enemy.dead = true;
-        enemy.speed = 0;
-        enemy.removeTime = new Date().getTime();
-        if (enemy.die) enemy.die();
-        this.audioManager.playChickenDead();
-        this.character.speedY = 15;
+    enemy.dead = true;
+    enemy.speed = 0;
+    enemy.removeTime = new Date().getTime();
+    this.character.lastStompTime = new Date().getTime(); 
+    
+    if (enemy.die) enemy.die();
+    this.audioManager.playChickenDead();
+    this.character.speedY = 15;
     }
 
     /**
