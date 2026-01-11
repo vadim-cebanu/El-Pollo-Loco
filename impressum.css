@@ -6,12 +6,21 @@
     font-display: swap;
 }
 
+.impressum-page{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
 .impressum-container {
     padding: 40px;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 20px;
     color: white;
     font-family: 'Boogaloo';
+  
+    
 }
 
 .impressum-container h1 {
