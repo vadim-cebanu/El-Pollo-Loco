@@ -344,9 +344,12 @@ function hideAllGameUI() {
   document.getElementById("game-buttons").classList.add("hidden");
   hideMobileControls();
 }
+
 document.addEventListener("DOMContentLoaded", init);
+
 window.addEventListener("resize", handleResponsive);
 window.addEventListener("orientationchange", handleResponsive);
+
 document.addEventListener("click", (e) => {
   let dialog = document.getElementById("controls-dialog");
   let content = document.getElementById("controls-content");
