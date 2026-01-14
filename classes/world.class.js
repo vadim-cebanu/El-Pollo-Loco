@@ -157,6 +157,7 @@ class World {
       this.canThrow = true;
     }, 500);
   }
+  
   /**
    * Checks for collisions between the character and all enemies.
    * Solves the "double chicken" bug by prioritizing jump kills and
