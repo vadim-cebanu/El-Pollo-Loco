@@ -31,7 +31,12 @@ function init() {
  */
 function getAllImagePaths() {
   return [
-    // Character
+    // Start/End screens
+    "img/9_intro_outro_screens/start/startscreen_1.png",
+    "img/9_intro_outro_screens/start/startscreen_2.png",
+    "img/You won, you lost/You Win A.png",
+    "img/You won, you lost/Game Over.png",
+    // Character - most important
     "img/2_character_pepe/1_idle/idle/I-1.png",
     "img/2_character_pepe/1_idle/idle/I-2.png",
     "img/2_character_pepe/1_idle/idle/I-3.png",
@@ -173,42 +178,72 @@ function getAllImagePaths() {
     // Coins
     "img/8_coin/coin_1.png",
     "img/8_coin/coin_2.png",
-    // Intro/Outro screens
-    "img/9_intro_outro_screens/start/startscreen_1.png",
-    "img/9_intro_outro_screens/start/startscreen_2.png",
-    "img/You won, you lost/You Win A.png",
-    "img/You won, you lost/Game Over.png",
+    // Background layers
+    "img/5_background/layers/air.png",
+    "img/5_background/layers/3_third_layer/1.png",
+    "img/5_background/layers/3_third_layer/2.png",
+    "img/5_background/layers/2_second_layer/1.png",
+    "img/5_background/layers/2_second_layer/2.png",
+    "img/5_background/layers/1_first_layer/1.png",
+    "img/5_background/layers/1_first_layer/2.png",
+    "img/5_background/layers/4_clouds/1.png",
+    "img/5_background/layers/4_clouds/2.png",
   ];
 }
 
 /**
- * Preloads all game assets
+ * Preloads all game assets efficiently
  * @returns {Promise<void>}
  */
 async function preloadAssets() {
-  const imagePaths = getAllImagePaths();
   const loadingText = document.getElementById("loading-text");
+  const allAssets = getAllImagePaths();
+  
+  // Remove duplicates to speed up loading
+  const uniqueAssets = [...new Set(allAssets)];
+  
+  loadingText.textContent = "Loading assets...";
+  await loadImages(uniqueAssets, loadingText, uniqueAssets.length);
+  
+  assetsLoaded = true;
+  showStartButtons();
+}
+
+/**
+ * Loads array of images with progress tracking (in batches to avoid server overload)
+ * @param {string[]} imagePaths - Array of image paths to load
+ * @param {HTMLElement} loadingText - Text element to update progress
+ * @param {number} total - Total number of assets
+ * @returns {Promise<void>}
+ */
+async function loadImages(imagePaths, loadingText, total) {
   let loadedCount = 0;
-  const totalAssets = imagePaths.length;
+  const BATCH_SIZE = 30; // Load 30 images simultaneously for faster loading
 
   const loadImage = (src) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => resolve(img); // Continue even if image fails
+      img.onload = () => {
+        loadedCount++;
+        const progress = Math.round((loadedCount / total) * 100);
+        loadingText.textContent = `Loading assets... ${progress}%`;
+        resolve(img);
+      };
+      img.onerror = () => {
+        loadedCount++;
+        const progress = Math.round((loadedCount / total) * 100);
+        loadingText.textContent = `Loading assets... ${progress}%`;
+        resolve(img);
+      };
       img.src = src;
     });
   };
 
-  for (const path of imagePaths) {
-    await loadImage(path);
-    loadedCount++;
-    const progress = Math.round((loadedCount / totalAssets) * 100);
-    loadingText.textContent = `Loading assets... ${progress}%`;
+  // Load images in batches to avoid overwhelming the server
+  for (let i = 0; i < imagePaths.length; i += BATCH_SIZE) {
+    const batch = imagePaths.slice(i, i + BATCH_SIZE);
+    await Promise.all(batch.map(path => loadImage(path)));
   }
-
-  assetsLoaded = true;
-  showStartButtons();
 }
 
 /**
