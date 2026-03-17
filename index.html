@@ -42,7 +42,11 @@
 
     <div id="game-container">
       <div id="start-screen">
-        <div id="start-buttons">
+        <div id="loading-indicator">
+          <div class="loading-spinner"></div>
+          <p id="loading-text">Loading assets... 0%</p>
+        </div>
+        <div id="start-buttons" class="hidden">
           <button id="startBtn" onclick="startGame()">Start Game</button>
           <button id="controlsBtn" onclick="showControls()">Controls</button>
         </div>
